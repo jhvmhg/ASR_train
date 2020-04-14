@@ -149,7 +149,7 @@ if [ $stage -le 13 ]; then
     --cleanup.remove-egs $remove_egs \
     --feat-dir data/${train_fbank} \
     --tree-dir $treedir \
-    --lat-dir exp/tri4b_lats \
+    --lat-dir $ali_dir \
     --dir $dir  || exit 1;
 
 fi
