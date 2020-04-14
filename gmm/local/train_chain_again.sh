@@ -148,6 +148,8 @@ if [ $stage -le 13 ]; then
     --trainer.max-param-change $max_param_change \
     --cleanup.remove-egs $remove_egs \
     --feat-dir data/${train_fbank} \
+    --chain.frame-subsampling-factor 3 \
+    --chain.alignment-subsampling-factor 1\
     --tree-dir $treedir \
     --lat-dir $ali_dir \
     --dir $dir  || exit 1;
