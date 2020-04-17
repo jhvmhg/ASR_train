@@ -8,7 +8,7 @@ nj=24
 stage=9
 train_stage=-10
 get_egs_stage=-10
-dir=$1
+
 
 # training options
 num_epochs=4
@@ -31,6 +31,8 @@ echo "$0 $@"  # Print the command line for logging
 . ./cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
+
+dir=$1
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
