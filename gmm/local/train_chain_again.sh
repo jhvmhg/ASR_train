@@ -18,16 +18,20 @@ leftmost_questions_truncate=-1
 max_param_change=2.0
 final_layer_normalize_target=0.5
 num_jobs_initial=1
-num_jobs_final=1
+num_jobs_final=4
 minibatch_size=128
 frames_per_eg=150
 remove_egs=false
 common_egs_dir=
 xent_regularize=0.1
 
+frame_subsampling_factor=3
+alignment_subsampling_factor=3
+
 train_mfcc=train_mfcc
 train_fbank=train_fbank
 ali_dir=exp/chain/chain_align_lat
+
 lang=data/lang_new_again
 treedir=exp/chain/chain_tree
 
@@ -38,7 +42,13 @@ echo "$0 $@"  # Print the command line for logging
 . ./path.sh
 . ./utils/parse_options.sh
 
+if [ -z $lat_dir ]; then
+  lat_dir=$ali_dir
+fi
+
 dir=$1
+
+
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
@@ -76,7 +86,8 @@ fi
 if [ $stage -le 11 ]; then
   # Build a tree using our new topology. This is the critically different
   # step compared with other recipes.
-  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor 3 --alignment-subsampling-factor 1\
+  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor $frame_subsampling_factor \
+      --alignment-subsampling-factor $alignment_subsampling_factor \
       --leftmost-questions-truncate $leftmost_questions_truncate \
       --context-opts "--context-width=2 --central-position=1" \
       --cmd "$train_cmd" 7000 data/$train_fbank $lang $ali_dir $treedir
@@ -149,12 +160,12 @@ if [ $stage -le 13 ]; then
     --trainer.optimization.initial-effective-lrate $initial_effective_lrate \
     --trainer.optimization.final-effective-lrate $final_effective_lrate \
     --trainer.max-param-change $max_param_change \
+    --chain.frame-subsampling-factor ${frame_subsampling_factor} \
+    --chain.alignment-subsampling-factor ${alignment_subsampling_factor} \
     --cleanup.remove-egs $remove_egs \
     --feat-dir data/${train_fbank} \
-    --chain.frame-subsampling-factor 3 \
-    --chain.alignment-subsampling-factor 1\
     --tree-dir $treedir \
-    --lat-dir $ali_dir \
+    --lat-dir $lat_dir \
     --dir $dir  || exit 1;
 
 fi
