@@ -25,6 +25,12 @@ remove_egs=false
 common_egs_dir=
 xent_regularize=0.1
 
+train_mfcc=train_mfcc
+train_fbank=train_fbank
+ali_dir=exp/chain/chain_align_lat
+lang=data/lang_new_again
+treedir=exp/chain/chain_tree
+
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging
 
@@ -42,12 +48,7 @@ where "nvcc" is installed.
 EOF
 fi
 
-train_mfcc=train_mfcc
-train_fbank=train_fbank
-ali_dir=exp/chain/chain_align_lat
-# tri4b=exp/tri4b
-lang=data/lang_new_again
-treedir=exp/chain/chain_tree
+
 
 # if [ $stage -le 9 ]; then
 #   # Get the alignments as lattices (gives the LF-MMI training more freedom).
