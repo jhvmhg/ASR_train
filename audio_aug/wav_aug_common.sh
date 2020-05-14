@@ -44,11 +44,8 @@ function contains() {
 
 function dump_files() {
     local param=$1
-    mkdir -p ${srcdir}_${param}/wav
-    cat ${srcdir}_${param}/wav.scp | local/dump_wavs.py ${srcdir}_${param} >/dev/null 2>&1 &
-    echo "Wait for a few minutes, the new wavs are dumping to disk!"
+    bash local/dump_file_multi.sh $param
 }
-    
 
 for param in ${augs[*]};
 do
