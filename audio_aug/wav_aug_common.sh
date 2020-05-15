@@ -44,7 +44,7 @@ function contains() {
 
 function dump_files() {
     local param=$1
-    bash local/dump_file_multi.sh $param
+    bash local/dump_file_multi.sh ${param}
 }
 
 for param in ${augs[*]};
@@ -93,7 +93,7 @@ do
                 --source-sampling-rate $sample_rate \
                 $srcdir ${srcdir}_reverb
             if $dump_wavs; then
-                dump_files $param
+                dump_files ${srcdir}_reverb
             fi
             ;;
         babble|music|noise)
@@ -111,7 +111,7 @@ do
                         --bg-noise-dir "musan/tmp/musan_speech" \
                         ${srcdir} ${srcdir}_babble
                     if $dump_wavs; then
-                        dump_files $param
+                        dump_files ${srcdir}_babble
                     fi
                     ;;
                 music)
@@ -119,7 +119,7 @@ do
                         --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "musan/tmp/musan_music" \
                         ${srcdir} ${srcdir}_music
                     if $dump_wavs; then
-                        dump_files $param
+                        dump_files ${srcdir}_music
                     fi
                     ;;
                 noise)
@@ -127,7 +127,7 @@ do
                         --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "musan/tmp/musan_noise" \
                         ${srcdir} ${srcdir}_noise
                     if $dump_wavs; then
-                        dump_files $param
+                        dump_files ${srcdir}_noise
                     fi
                     ;;
             esac
@@ -135,13 +135,13 @@ do
         volume)
             local/perturb_data_dir_volume.sh --scale_low 0.3 --scale_high 1.1 ${srcdir} ${srcdir}_volume
             if $dump_wavs; then
-                dump_files $param
+                dump_files ${srcdir}_volume
             fi
             ;;
         speed)
             utils/data/perturb_data_dir_speed_3way.sh --always-include-prefix true ${srcdir} ${srcdir}_speed
             if $dump_wavs; then
-                dump_files $param
+                dump_files ${srcdir}_speed
             fi
             ;;
     esac
