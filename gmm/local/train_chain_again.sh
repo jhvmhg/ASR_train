@@ -28,12 +28,15 @@ xent_regularize=0.1
 frame_subsampling_factor=3
 alignment_subsampling_factor=3
 
-train_mfcc=train_mfcc
-train_fbank=train_fbank
-ali_dir=exp/chain/chain_align_lat
+ali_model_dir=exp/chain/tdnn_attend
+ali_fbank=../train_fbank_combine_fake
+ali_dir=exp/chain/chain_combine_fake_align_lat
 
-lang=data/lang_new_again
-treedir=exp/chain/chain_tree
+train_fbank=../train_fbank_combine
+
+lang=data/lang_new
+lang_new=data/lang_new_again
+treedir=exp/chain/chain_tree_again
 
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging
@@ -60,26 +63,28 @@ fi
 
 
 
-# if [ $stage -le 9 ]; then
-#   # Get the alignments as lattices (gives the LF-MMI training more freedom).
-#   # use the same num-jobs as the alignments
-#   steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" data/$train_mfcc \
-#     data/lang $tri4b exp/tri4b_lats
-#   rm exp/tri4b_lats/fsts.*.gz # save space
-# fi
+if [ $stage -le 9 ]; then
+  # Get the alignments as lattices (gives the LF-MMI training more freedom).
+  # use the same num-jobs as the alignments
+  /steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
+  --acoustic_scale 1.0 --generate_ali_from_lats true $ali_fbank $lang $ali_model_dir $ali_dir
+
+  rm ${ali_dir}/fsts.*.gz # save space
+fi
 
 
 if [ $stage -le 10 ]; then
   # Create a version of the lang/ directory that has one state per phone in the
   # topo file. [note, it really has two states.. the first one is only repeated
   # once, the second one has zero or more repeats.]
-  rm -rf $lang
-  cp -r data/lang $lang
-  silphonelist=$(cat $lang/phones/silence.csl) || exit 1;
-  nonsilphonelist=$(cat $lang/phones/nonsilence.csl) || exit 1;
+  rm -rf $lang_new
+  mkdir $lang_new
+  cp -r $lang $lang_new
+  silphonelist=$(cat $lang_new/phones/silence.csl) || exit 1;
+  nonsilphonelist=$(cat $lang_new/phones/nonsilence.csl) || exit 1;
   # Use our special topology... note that later on may have to tune this
   # topology.
-  steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >$lang/topo
+  steps/nnet3/chain/gen_topo.py $nonsilphonelist $silphonelist >$lang_new/topo
 fi
 
 
@@ -90,7 +95,7 @@ if [ $stage -le 11 ]; then
       --alignment-subsampling-factor $alignment_subsampling_factor \
       --leftmost-questions-truncate $leftmost_questions_truncate \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 7000 data/$train_fbank $lang $ali_dir $treedir
+      --cmd "$train_cmd" 7000 data/$train_fbank $lang_new $ali_dir $treedir
 fi
 
 
@@ -163,7 +168,7 @@ if [ $stage -le 13 ]; then
     --chain.frame-subsampling-factor ${frame_subsampling_factor} \
     --chain.alignment-subsampling-factor ${alignment_subsampling_factor} \
     --cleanup.remove-egs $remove_egs \
-    --feat-dir data/${train_fbank} \
+    --feat-dir ../${train_fbank} \
     --tree-dir $treedir \
     --lat-dir $lat_dir \
     --dir $dir  || exit 1;
