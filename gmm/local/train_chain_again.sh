@@ -79,7 +79,7 @@ if [ $stage -le 10 ]; then
   # once, the second one has zero or more repeats.]
   rm -rf $lang_new
   mkdir $lang_new
-  cp -r $lang $lang_new
+  cp -r ${lang}/* $lang_new
   silphonelist=$(cat $lang_new/phones/silence.csl) || exit 1;
   nonsilphonelist=$(cat $lang_new/phones/nonsilence.csl) || exit 1;
   # Use our special topology... note that later on may have to tune this
@@ -95,7 +95,7 @@ if [ $stage -le 11 ]; then
       --alignment-subsampling-factor $alignment_subsampling_factor \
       --leftmost-questions-truncate $leftmost_questions_truncate \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 7000 data/$train_fbank $lang_new $ali_dir $treedir
+      --cmd "$train_cmd" 7000 $train_fbank $lang_new $ali_dir $treedir
 fi
 
 
@@ -177,4 +177,7 @@ fi
 
 echo "Done";
 exit 0;
+
+
+
 
