@@ -1,16 +1,18 @@
 import os
 import sys
 from pathlib import Path
+
 sys.path.append("./")
 from lib.io import parse_file_to_dict, write_dict_to_file, get_new_id, copy_file_if_exists
 import shutil
+
 
 def relace_utt(oridir, destdir, file):
     """ This function genarate destdir/file from oridir/file contain utt in destdir/wav.scp
         E.g. relace_utt("magic_aug/data", "magic_aug/data_reverb", "utt2dur")
     """
 
-    utt2dur = parse_file_to_dict(oridir + os.sep + file)
+    utt2dur = parse_file_to_dict(oridir + os.sep + file, value_processor=lambda x: " ".join(x))
 
     des_scp = parse_file_to_dict(destdir + os.sep + "wav.scp")
 
@@ -38,6 +40,7 @@ def genarate_wav_scp(wav_dir):
         shutil.copy(wav_dir + os.sep + "wav.scp", wav_dir + os.sep + ".backup/wav.scp")
     write_dict_to_file(wav_scp, wav_dir + os.sep + "wav.scp")
 
+
 def main():
     if len(sys.argv) != 4:
         print("replace_utt.py <original_dir> <dest_dir> <file>")
@@ -47,6 +50,6 @@ def main():
     file = sys.argv[3]
     relace_utt(oridir, destdir, file)
 
+
 if __name__ == '__main__':
     main()
-
