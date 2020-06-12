@@ -168,7 +168,7 @@ if [ $stage -le 13 ]; then
     --chain.frame-subsampling-factor ${frame_subsampling_factor} \
     --chain.alignment-subsampling-factor ${alignment_subsampling_factor} \
     --cleanup.remove-egs $remove_egs \
-    --feat-dir ../${train_fbank} \
+    --feat-dir ${train_fbank} \
     --tree-dir $treedir \
     --lat-dir $lat_dir \
     --dir $dir  || exit 1;
