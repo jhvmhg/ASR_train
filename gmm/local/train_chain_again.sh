@@ -28,14 +28,17 @@ xent_regularize=0.1
 frame_subsampling_factor=3
 alignment_subsampling_factor=3
 
-ali_model_dir=exp/chain/tdnn_attend
-ali_fbank=../train_fbank_combine_fake
-ali_dir=exp/chain/chain_combine_fake_align_lat
+# alignment options
+model_ali_dir=exp/chain/tdnn_attend
+ali_feats=../train_fbank_combine_fake
+ali_dir=
+lat_dir=
 
-train_fbank=../train_fbank_combine
+# new model options
+train_feats=../train_fbank_combine
 
 lang=data/lang_new
-lang_new=data/lang_new_again
+lang_new=
 treedir=exp/chain/chain_tree_again
 
 # End configuration section.
@@ -45,13 +48,21 @@ echo "$0 $@"  # Print the command line for logging
 . ./path.sh
 . ./utils/parse_options.sh
 
+
+
+dir=$1
+
 if [ -z $lat_dir ]; then
   lat_dir=$ali_dir
 fi
 
-dir=$1
+if [ -z $lang_new ]; then
+  lang_new=${dir}/lang
+fi
 
-
+if [ -z $treedir ]; then
+  treedir=${dir}/tree
+fi
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
@@ -67,7 +78,7 @@ if [ $stage -le 9 ]; then
   # Get the alignments as lattices (gives the LF-MMI training more freedom).
   # use the same num-jobs as the alignments
   /steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
-  --acoustic_scale 1.0 --generate_ali_from_lats true $ali_fbank $lang $ali_model_dir $ali_dir
+  --acoustic_scale 1.0 --generate_ali_from_lats true $ali_feats $lang $model_ali_dir $ali_dir
 
   rm ${ali_dir}/fsts.*.gz # save space
 fi
@@ -95,7 +106,7 @@ if [ $stage -le 11 ]; then
       --alignment-subsampling-factor $alignment_subsampling_factor \
       --leftmost-questions-truncate $leftmost_questions_truncate \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 7000 $train_fbank $lang_new $ali_dir $treedir
+      --cmd "$train_cmd" 7000 $train_feats $lang_new $ali_dir $treedir
 fi
 
 
@@ -168,7 +179,7 @@ if [ $stage -le 13 ]; then
     --chain.frame-subsampling-factor ${frame_subsampling_factor} \
     --chain.alignment-subsampling-factor ${alignment_subsampling_factor} \
     --cleanup.remove-egs $remove_egs \
-    --feat-dir ${train_fbank} \
+    --feat-dir ${train_feats} \
     --tree-dir $treedir \
     --lat-dir $lat_dir \
     --dir $dir  || exit 1;
