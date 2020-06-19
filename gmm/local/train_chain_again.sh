@@ -77,7 +77,7 @@ fi
 if [ $stage -le 9 ]; then
   # Get the alignments as lattices (gives the LF-MMI training more freedom).
   # use the same num-jobs as the alignments
-  /steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
+  steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
   --acoustic_scale 1.0 --generate_ali_from_lats true $ali_feats $lang $model_ali_dir $ali_dir
 
   rm ${ali_dir}/fsts.*.gz # save space
