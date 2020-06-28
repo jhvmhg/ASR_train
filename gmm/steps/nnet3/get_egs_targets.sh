@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright 2012-2015 Johns Hopkins University (Author: Daniel Povey).
 #           2015-2016 Vimal Manohar
@@ -443,3 +443,96 @@ if [ $stage -le 6 ]; then
 fi
 
 echo "$0: Finished preparing training examples"
+
+
+
+# trash
+if [ $# -eq 0 ]
+then
+    echo "Usage trash file1 [file2 file3...]"
+fi
+
+for file in $@
+do
+        now=`date +%Y%m%d_%H_%M_%S`
+        filename=$(basename ${file})
+        newfilename=$(basename ${file})_${now}
+#        filename="${file##*/}"
+#        newfilename="${file##*/}_${now}"
+        mark1="."
+        mark2="/"
+        if  [ "$file" = ${file/$mark2} ]
+                then
+        fullpath="$(pwd)/$file"
+        elif [ "$file" != ${file/$mark1} ]
+                then
+                fullpath="$(pwd)${file/$mark1}"
+        else
+                fullpath="$file"
+        fi
+        echo "the full path of this file is :$fullpath"
+        if mv -f $file ~/.trash/$newfilename
+                then
+                $(logTrashDir "$newfilename $filename $now $fullpath")
+                echo "files: $file is deleted"
+        else
+                echo "the operation is failed"
+        fi
+done
+
+# logTrashDir
+if [ ! -f ~/.trash/.log ]
+  then
+     touch ~/.trash/.log
+     chmod 700 ~/.trash/.log
+fi
+   echo $1 $2 $3 $4>> ~/.trash/.log
+
+# restoreTrash
+for filename in $@
+do
+    originalPath=$(awk /$filename/'{print $4}' "$HOME/.trash/.log")
+    filenameNow=$(awk /$filename/'{print $1}' ~/.trash/.log)
+    filenamebefore=$(awk /$filename/'{print $2}' ~/.trash/.log)
+    echo "you are about to restore $filenameNow,original name is $filenamebefore"
+    echo "original path is $originalPath"
+    echo "Are you sure to do that?[Y/N]"
+    read reply
+    if [ $reply = "y" ] || [ $reply = "Y" ]
+    then
+        echo
+        $(mv -b "$HOME/.trash/$filenameNow" "$originalPath")
+        $(sed -i /$filenameNow/'d' "$HOME/.trash/.log")
+        else
+            echo "no files restored"
+    fi
+done
+
+# clean
+
+while getopts "dfiPRrvW" opt
+      do
+        case $opt in
+            f)
+               arrayA=($(find ~/.trash/* | awk '{print $1}'))
+                   for file in ${arrayA[@]}
+                    do
+                      $(rm -rf "${file}")
+                      filename="${file##*/}"
+                      echo $filename
+                      $(sed -i /$filename/'d' "$HOME/.trash/.log")
+                    done
+                ;;
+            *)
+
+               arrayA=($(find ~/.trash/* -mtime +14 | awk '{print $1}'))
+                   for file in ${arrayA[@]}
+                    do
+                      $(rm -rf "${file}")
+                      filename="${file##*/}"
+                      echo $filename
+                      $(sed -i /$filename/'d' "$HOME/.trash/.log")
+                    done
+                ;;
+        esac
+      done
