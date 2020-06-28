@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Copyright 2012-2013  Johns Hopkins University (Author: Daniel Povey);
 #                      Arnab Ghoshal
 #                2014  Guoguo Chen
@@ -128,7 +128,7 @@ if [[ ! -f $srcdir/lexicon.txt ]]; then
   perl -ape 's/(\S+\s+)\S+\s+(.+)/$1$2/;' < $srcdir/lexiconp.txt > $srcdir/lexicon.txt || exit 1;
 fi
 if [[ ! -f $srcdir/lexiconp.txt ]]; then
-  echo "**Creating $srcdir/lexiconp.txt from $srcdir/lexicon.txt"  #######
+  echo "**Creating $srcdir/lexiconp.txt from $srcdir/lexicon.txt"
   perl -ape 's/(\S+\s+)(.+)/${1}1.0\t$2/;' < $srcdir/lexicon.txt > $srcdir/lexiconp.txt || exit 1;
 fi
 
@@ -193,7 +193,7 @@ if $position_dependent_phones; then
   # this has the format (on each line)
   # <original phone> <version 1 of original phone> <version 2> ...
   # where the versions depend on the position of the phone within a word.
-  # For instance, we'd have:
+  # For instance, we'd have:extra_questions.txt
   # AA AA_B AA_E AA_I AA_S
   # for (B)egin, (E)nd, (I)nternal and (S)ingleton
   # and in the case of silence
@@ -269,7 +269,7 @@ fi
 
 # add_lex_disambig.pl is responsible for adding disambiguation symbols to
 # the lexicon, for telling us how many disambiguation symbols it used,
-# and and also for modifying the unknown-word's pronunciation (if the
+# and also for modifying the unknown-word's pronunciation (if the
 # --unk-fst was provided) to the sequence "#1 #2 #3", and reserving those
 # disambig symbols for that purpose.
 # The #2 will later be replaced with the actual unk model.  The reason
