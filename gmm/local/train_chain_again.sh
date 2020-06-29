@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 nj=24
@@ -28,18 +27,21 @@ xent_regularize=0.1
 frame_subsampling_factor=3
 alignment_subsampling_factor=3
 
-# alignment options
-model_ali_dir=exp/chain/tdnn_attend
+# data path
+ali_model_dir=exp/chain/tdnn_attend
 ali_feats=../train_fbank_combine_fake
-ali_dir=
-lat_dir=
+ali_dir=exp/chain/chain_combine_fake_align_lat
 
-# new model options
 train_feats=../train_fbank_combine
 
-lang=data/lang_new
-lang_new=
+lang=${ali_model_dir}/lang
+lang_new=data/lang_aud_new
 treedir=exp/chain/chain_tree_again
+
+# config for generate lat and ali from origanl_lat_dir
+use_origanl=false
+origanl_lat_dir=
+prefixes_aug=reverb
 
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging
@@ -48,21 +50,13 @@ echo "$0 $@"  # Print the command line for logging
 . ./path.sh
 . ./utils/parse_options.sh
 
-
-
-dir=$1
-
 if [ -z $lat_dir ]; then
   lat_dir=$ali_dir
 fi
 
-if [ -z $lang_new ]; then
-  lang_new=${dir}/lang
-fi
+dir=$1
 
-if [ -z $treedir ]; then
-  treedir=${dir}/tree
-fi
+
 
 if ! cuda-compiled; then
   cat <<EOF && exit 1
@@ -77,10 +71,17 @@ fi
 if [ $stage -le 9 ]; then
   # Get the alignments as lattices (gives the LF-MMI training more freedom).
   # use the same num-jobs as the alignments
-  steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
-  --acoustic_scale 1.0 --generate_ali_from_lats true $ali_feats $lang $model_ali_dir $ali_dir
+  if ! ${use_origanl}; then
+      steps/nnet3/align_lats.sh --nj $nj --cmd "$train_cmd"  --scale-opts '--transition-scale=1.0 --self-loop-scale=1.0' \
+      --acoustic_scale 1.0 --generate_ali_from_lats true $ali_feats $lang $ali_model_dir $ali_dir
 
-  rm ${ali_dir}/fsts.*.gz # save space
+      rm ${ali_dir}/fsts.*.gz # save space
+  else
+      steps/copy_lat_dir.sh --cmd "$train_cmd" --nj $nj --prefixes $prefixes_aug $ali_feats \
+      ${origanl_lat_dir} ${ali_dir}
+      steps/copy_ali_dir.sh --cmd "$train_cmd" --nj $nj --prefixes $prefixes_aug $ali_feats \
+      ${origanl_lat_dir} ${ali_dir}
+  fi
 fi
 
 
@@ -151,6 +152,7 @@ if [ $stage -le 12 ]; then
 
 EOF
   steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
+
 fi
 
 
@@ -188,6 +190,7 @@ fi
 
 echo "Done";
 exit 0;
+
 
 
 
