@@ -11,6 +11,8 @@ nj=4
 combine_lat=true
 combine_ali=true
 tolerance=10
+
+filter_scps=true
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging.
 
@@ -169,11 +171,17 @@ do_combine() {
 #       perl utils/filter_scp.pl \
 #       "$data/utt2spk.JOB" "$temp_dir/$ark.JOB.scp.tmp" > "$temp_dir/$ark.JOB.scp" || exit 1
 
+if !${filter_scps} ; then
   $cmd JOB=1:$src_id $dest/log/gather_${entities}_split.JOB.log \
-      python3 ../tools/filter_scp.py \
+    python3 ../tools/filter_scp.py \
       "$data/utt2spk" "$temp_dir/$ark.JOB.scp.tmp" "$temp_dir/$ark.JOB.scp" || exit 1
-
-#   utils/filter_scps.pl  JOB=1:$src_id $data/utt2spk.JOB $temp_dir/$ark.JOB.scp.tmp $temp_dir/$ark.JOB.scp
+else
+  $cmd JOB=1:$src_id $dest/log/link_soft.JOB.log \
+    ln -s utt2spk $data/utt2spk.JOB
+  utils/filter_scps.pl  JOB=1:$src_id $data/utt2spk.JOB $temp_dir/$ark.JOB.scp.tmp $temp_dir/$ark.JOB.scp || exit 1
+  $cmd JOB=1:$src_id $dest/log/rm_link_soft.JOB.log \
+    rm $data/utt2spk.JOB || exit 1
+fi
 
   # Merge (presumed already sorted) scp's into a single script.
   sort -m $temp_dir/$ark.*.scp > $temp_dir/$ark.scp || exit 1
