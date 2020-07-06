@@ -2,7 +2,7 @@
 
 stage=1
 graph_dir=
-mkgraph_opt=
+mkgraph_opt="--self-loop-scale 1.0"
 . ./cmd.sh ## You'll want to change cmd.sh to something that will work on your system.
            ## This relates to the queue.
 . ./path.sh
@@ -37,9 +37,12 @@ if [ $stage -le 2 ]; then
   # Note: it might appear that this $lang directory is mismatched, and it is as
   # far as the 'topo' is concerned, but this script doesn't read the 'topo' from
   # the lang directory.
-  utils/mkgraph.sh $mkgraph_opt --self-loop-scale 1.0 $lang_dir $am_dir $graph_dir
+  utils/mkgraph.sh $mkgraph_opt $lang_dir $am_dir $graph_dir
 fi
 
-echo "make_graph Done";
+echo "Done";
 exit 0;
+
+
+
 
