@@ -2,7 +2,7 @@
 
 stage=1
 graph_dir=
-mkgraph_opt="--self-loop-scale 1.0"
+mkgraph_opt="--self-loop-scale 1.0" #chain model defalut
 . ./cmd.sh ## You'll want to change cmd.sh to something that will work on your system.
            ## This relates to the queue.
 . ./path.sh
