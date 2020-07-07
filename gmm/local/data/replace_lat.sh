@@ -54,5 +54,5 @@ if [ $stage -le 3 ]; then
   # If generate_alignments is true, ali.*.gz is generated in lats dir
     $cmd JOB=1:$src_id $dir/log/generate_alignments.JOB.log \
         lattice-best-path --acoustic-scale=$acoustic_scale "ark:gunzip -c $dest/lat.JOB.gz |" \
-        ark:/dev/null "ark:|gzip -c >$dest/ali.JOB.gz" || exit 1;
+            ark:/dev/null "ark:|gzip -c >$dest/ali.JOB.gz" || exit 1;
 fi
