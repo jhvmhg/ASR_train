@@ -94,7 +94,7 @@ if [ $stage -le 13 ]; then
     --trainer.optimization.final-effective-lrate $final_effective_lrate \
     --trainer.max-param-change $max_param_change \
     --cleanup.remove-egs $remove_egs \
-    --feat-dir ../train_fbank_combine_1000k \
+    --feat-dir $feat_dir \
     --dir $dir  || exit 1;
 
 fi
