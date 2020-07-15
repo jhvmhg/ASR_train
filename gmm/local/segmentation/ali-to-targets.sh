@@ -115,3 +115,28 @@ steps/segmentation/validate_targets_dir.sh $dir $data || exit 1
 echo "$0: Done creating targets in $dir/targets.scp"
 
 
+#python
+# from kaldiio import ReadHelper
+#import numpy as np
+#from kaldiio import WriteHelper
+#
+#ali = {}
+#with ReadHelper('ark:gunzip -c lats/train_all_lat/ali.*.gz |') as reader:
+#    for key, numpy_array in reader:
+#        ali[key] = numpy_array
+#
+#target={}
+#silence=[1,2,3]
+#for utt in ali:
+#    target[utt] = np.zeros((len(ali[utt]),2), dtype=np.int32)
+#    for i in range(len(ali[utt])):
+#        if ali[utt][i] in silence:
+#            target[utt][i][0] += 1
+#        else:
+#            target[utt][i][1] += 1
+#
+#
+#with WriteHelper('ark,scp:file.ark,file.scp', compression_method=2) as writer:
+#    for utt in target:
+#        writer(utt, target[utt])
+
