@@ -25,6 +25,11 @@ remove_egs=false
 common_egs_dir=
 xent_regularize=0.1
 
+lang=../gmm/data/lang
+feat_dir=../train_fbank_combine
+ali_dir=exp/chain/chain_combine_fake_align_lat
+targets_dir=exp/segmentation1a/train_fbank_combine_targets
+
 # End configuration section.
 echo "$0 $@"  # Print the command line for logging
 
@@ -43,29 +48,27 @@ if [ $stage -le 11 ]; then
       --silence-phones ../gmm/data/lang/phones/optional_silence.txt \
       --garbage-phones ../gmm/data/lang/phones/spn.txt \
       --max-phone-duration 0.5 \
-      ../train_fbank_combine ../gmm/data/lang \
-      exp/chain/chain_combine_fake_align_lat \
-      exp/segmentation1a/train_fbank_combine_targets
+      $feat_dir $lang \
+      $ali_dir $targets_dir
 fi
 
 if [ $stage -le 12 ]; then
   mkdir -p $dir
   echo "$0: creating neural net configs using the xconfig parser";
 
-  num_targets=$(tree-info exp/chain/chain_combine_fake_align_lat/tree |grep num-pdfs|awk '{print $2}')
+  num_targets=3
 
   mkdir -p $dir/configs
   cat <<EOF > $dir/configs/network.xconfig
-  input dim=100 name=ivector
   input dim=40 name=input
 
   # please note that it is important to have input layer with the name=input
   # as the layer immediately preceding the fixed-affine-layer to enable
   # the use of short notation for the descriptor
-  fixed-affine-layer name=lda input=Append(-2,-1,0,1,2,ReplaceIndex(ivector, t, 0)) affine-transform-file=$dir/configs/lda.mat
+#   fixed-affine-layer name=lda input=Append(-2,-1,0,1,2,ReplaceIndex(ivector, t, 0)) affine-transform-file=$dir/configs/lda.mat
 
   # the first splicing is moved before the lda layer, so no splicing here
-  relu-renorm-layer name=tdnn1 dim=650
+  relu-renorm-layer name=tdnn1 dim=650 input=Append(-2,-1,0,1,2)
   relu-renorm-layer name=tdnn2 dim=650 input=Append(-1,0,1)
   relu-renorm-layer name=tdnn3 dim=650 input=Append(-1,0,1)
   relu-renorm-layer name=tdnn4 dim=650 input=Append(-3,0,3)
