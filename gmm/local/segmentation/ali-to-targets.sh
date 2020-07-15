@@ -99,7 +99,7 @@ frame_shift=$(utils/data/get_frame_shift.sh $data) || exit 1
 max_phone_len=$(perl -e "print int($max_phone_duration / $frame_shift)")
 
 $cmd JOB=1:$nj $dir/log/get_targets.JOB.log \
-  local/segmentation/arc_info_to_targets.py \
+  python local/segmentation/arc_info_to_targets.py \
     --silence-phones=$dir/silence_phones.txt \
     --max-phone-length=$max_phone_len \
     $dir/arc_info_sym.JOB.txt - \| \
