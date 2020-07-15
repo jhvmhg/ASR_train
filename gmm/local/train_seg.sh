@@ -25,9 +25,9 @@ remove_egs=false
 common_egs_dir=
 xent_regularize=0.1
 
-lang=../gmm/data/lang
-feat_dir=../train_fbank_combine
-ali_dir=exp/chain/chain_combine_fake_align_lat
+lang=.data/lang_aud
+feat_dir=../data/combine_data
+ali_dir=../lats/train_all_lat
 targets_dir=exp/segmentation1a/train_fbank_combine_targets
 
 # End configuration section.
@@ -44,9 +44,8 @@ dir=$1
 
 if [ $stage -le 11 ]; then
 
-    bash steps/segmentation/ali_to_targets.sh \
+    bash local/segmentation/ali_to_targets.sh \
       --silence-phones ../gmm/data/lang/phones/optional_silence.txt \
-      --garbage-phones ../gmm/data/lang/phones/spn.txt \
       --max-phone-duration 0.5 \
       $feat_dir $lang \
       $ali_dir $targets_dir
