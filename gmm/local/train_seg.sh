@@ -55,7 +55,7 @@ if [ $stage -le 12 ]; then
   mkdir -p $dir
   echo "$0: creating neural net configs using the xconfig parser";
 
-  num_targets=3
+  num_targets=2
 
   mkdir -p $dir/configs
   cat <<EOF > $dir/configs/network.xconfig
