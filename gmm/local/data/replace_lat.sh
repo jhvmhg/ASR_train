@@ -21,6 +21,13 @@ if [ $stage -le 1 ]; then
         "ark:gunzip -c $data/lat.JOB.gz |" "ark,scp:$temp_dir/lat.JOB.ark,$temp_dir/lat.JOB.scp"
 fi
 
+if [ $stage -le 2 ]; then
+    cat $temp_dir/lat.JOB.scp > $temp_dir/lat.all.scp || exit 1;
+    $cmd JOB=1:$src_id $dest/log/replace_lat_scp.JOB.log \
+        python local/data/replace_lat_scp.py $temp_dir/lat.all.scp \
+        $temp_dir/lat.JOB.scp $temp_dir/lat.JOB.new.scp
+fi
+
 #generate new lattice scp from lat.*scp ,then contiune
 # python3
 #lat_scp = parse_file_to_dict("lats/train_fbank_lat_replace_test/temp.gzGkzG/lat.all.scp")
@@ -42,7 +49,7 @@ fi
 #
 #    write_dict_to_file(lat_scp_new,"lats/train_fbank_lat_replace_test/temp.gzGkzG/lat."+str(i)+".new.scp")
 
-if [ $stage -le 2 ]; then
+if [ $stage -le 3 ]; then
     $cmd JOB=1:$src_id $dest/log/generate_new_lat_ark.JOB.log \
         lattice-copy \
           "scp:$temp_dir/lat.JOB.new.scp" \
@@ -50,7 +57,7 @@ if [ $stage -le 2 ]; then
 
 fi
 
-if [ $stage -le 3 ]; then
+if [ $stage -le 4 ]; then
   # If generate_alignments is true, ali.*.gz is generated in lats dir
     $cmd JOB=1:$src_id $dir/log/generate_alignments.JOB.log \
         lattice-best-path --acoustic-scale=$acoustic_scale "ark:gunzip -c $dest/lat.JOB.gz |" \
