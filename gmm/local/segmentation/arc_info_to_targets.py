@@ -101,7 +101,7 @@ def run(args):
 
                 if start_frame + num_frames > len(targets):
                     for t in range(len(targets), start_frame + num_frames):
-                        targets.append([0, 0, 0])
+                        targets.append([0, 0])
                     assert start_frame + num_frames == len(targets)
 
                 for t in range(start_frame, start_frame + num_frames):
