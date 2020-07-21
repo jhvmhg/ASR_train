@@ -193,7 +193,7 @@ if $position_dependent_phones; then
   # this has the format (on each line)
   # <original phone> <version 1 of original phone> <version 2> ...
   # where the versions depend on the position of the phone within a word.
-  # For instance, we'd have:extra_questions.txt
+  # For instance, we'd have:
   # AA AA_B AA_E AA_I AA_S
   # for (B)egin, (E)nd, (I)nternal and (S)ingleton
   # and in the case of silence

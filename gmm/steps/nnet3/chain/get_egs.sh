@@ -483,7 +483,7 @@ if [ $stage -le 5 ]; then
       for f in $dir/cegs.*.scp; do rm $f; done
     fi
   else
-    # we need to shuffle the 'intermediate archivesnnet3-chain-shuffle-egs' and then split into the
+    # we need to shuffle the 'intermediate archives' and then split into the
     # final archives.  we create soft links to manage this splitting, because
     # otherwise managing the output names is quite difficult (and we don't want
     # to submit separate queue jobs for each intermediate archive, because then
