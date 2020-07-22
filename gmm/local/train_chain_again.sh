@@ -36,7 +36,7 @@ train_feats=../train_fbank_combine
 
 lang=${ali_model_dir}/lang
 lang_new=data/lang_aud_new
-treedir=exp/chain/chain_tree_again
+tree_dir=exp/chain/chain_tree_again
 
 # config for generate lat and ali from origanl_lat_dir
 use_origanl=false
@@ -107,13 +107,13 @@ if [ $stage -le 11 ]; then
       --alignment-subsampling-factor $alignment_subsampling_factor \
       --leftmost-questions-truncate $leftmost_questions_truncate \
       --context-opts "--context-width=2 --central-position=1" \
-      --cmd "$train_cmd" 7000 $train_feats $lang_new $ali_dir $treedir
+      --cmd "$train_cmd" 7000 $train_feats $lang_new $ali_dir $tree_dir
 fi
 
 
 if [ $stage -le 12 ]; then
   echo "$0: creating neural net configs using the xconfig parser";
-  num_targets=$(tree-info $treedir/tree |grep num-pdfs|awk '{print $2}')
+  num_targets=$(tree-info $tree_dir/tree |grep num-pdfs|awk '{print $2}')
   learning_rate_factor=$(echo "print 0.5/$xent_regularize" | python)
 
   mkdir -p $dir/configs
@@ -182,7 +182,7 @@ if [ $stage -le 13 ]; then
     --chain.alignment-subsampling-factor ${alignment_subsampling_factor} \
     --cleanup.remove-egs $remove_egs \
     --feat-dir ${train_feats} \
-    --tree-dir $treedir \
+    --tree-dir $tree_dir \
     --lat-dir $lat_dir \
     --dir $dir  || exit 1;
 
