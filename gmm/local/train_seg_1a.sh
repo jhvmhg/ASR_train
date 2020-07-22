@@ -45,7 +45,7 @@ dir=$1
 if [ $stage -le 11 ]; then
 
     bash local/segmentation/ali_to_targets_1a.sh \
-      --silence-phones ../gmm/data/lang/phones/silence.txt \
+      --silence-phones ../gmm/data/lang/phones/silence.int \
       --max-phone-duration 0.5 \
       $feat_dir $lang \
       $ali_dir $targets_dir

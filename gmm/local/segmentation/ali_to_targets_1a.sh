@@ -31,13 +31,11 @@ if [ $# -ne 4 ]; then
   targets matrix.
 
   Usage: local/segmentation/ali_to_targets.sh <data-dir> <lang> <ali-dir> <targets-dir>"
-  e.g.: local/segmentation/ali_to_targets.sh \
-  --silence-phones data/lang/phones/optional_silence.txt \
-  --garbage-phones data/lang/phones/silence.txt \
-  --max-phone-duration 0.5 \
-  data/train_split10s data/lang \
-  exp/segmentation1a/tri3b_train_split10s_ali \
-  exp/segmentation1a/tri3b_train_split10s_targets
+  e.g.:bash local/segmentation/ali-to-targets_1a.sh \
+      --silence-phones ../gmm/data/lang/phones/silence.int \
+      --max-phone-duration 0.5 \
+      $feat_dir $lang \
+      $ali_dir $targets_dir
 EOF
   exit 1
 fi
@@ -64,11 +62,11 @@ mkdir -p $dir
 
 
 if [ -z "$silence_phones" ]; then
-  cat $lang/silence_phones.txt | \
-    utils/filter_scp.pl --exclude $dir/garbage_phones.txt > \
-    $dir/silence_phones.txt
+  cat $lang/silence_phones.int | \
+    utils/filter_scp.pl --exclude $dir/garbage_phones.int > \
+    $dir/silence_phones.int
 else
-  cp $silence_phones $dir/silence_phones.txt
+  cp $silence_phones $dir/silence_phones.int
 fi
 
 nj=$(cat $ali_dir/num_jobs) || exit 1
@@ -92,7 +90,7 @@ max_phone_len=$(perl -e "print int($max_phone_duration / $frame_shift)")
 
 $cmd JOB=1:$nj $dir/log/get_targets.JOB.log \
   python local/segmentation/phone_info_to_targets.py \
-    --silence-phones=$dir/silence_phones.txt \
+    --silence-phones=$dir/silence_phones.int \
     ark,t:$dir/phone_ali_info.JOB.txt \
     ark,scp:$dir/targets.JOB.ark,$dir/targets.JOB.scp || exit 1
 
