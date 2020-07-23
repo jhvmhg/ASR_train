@@ -10,9 +10,9 @@ import libs.common as common_lib
 
 def get_args():
     parser = argparse.ArgumentParser(
-        description="""This script converts arc-info into targets for training
+        description="""This script converts phone alignment into targets for training
         speech activity detection network. The output is a matrix archive
-        with each matrix having 3 columns -- silence, speech and garbage.
+        with each matrix having 2 columns -- silence and speech.
         The posterior probabilities of the phones of each of the classes are
         summed up to get the target matrix values.
         """)
