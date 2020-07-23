@@ -3,7 +3,9 @@
 . ./cmd.sh
 . ./path.sh
 
-n=48
+nj=48
+
+. ./utils/parse_options.sh
 
 data_path=$1
 if [ ! -f $data_path/wav.scp ];then
