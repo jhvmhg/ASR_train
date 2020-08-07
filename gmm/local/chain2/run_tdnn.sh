@@ -113,7 +113,7 @@ fi
 if [ $stage -le 11 ]; then
   # Build a tree using our new topology. This is the critically different
   # step compared with other recipes.
-  steps/nnet3/chain/build_tree.sh --frame-subsampling-factor $frame_subsampling_factor \
+  steps/nnet3/chain/build_tree.sh --stage 0 --frame-subsampling-factor $frame_subsampling_factor \
       --alignment-subsampling-factor $alignment_subsampling_factor \
       --context-opts "--context-width=2 --central-position=1" \
       --cmd "$train_cmd" 7000 $train_feats $lang_new $ali_dir $tree_dir
@@ -281,16 +281,15 @@ fi
 if [ $stage -le 22 ]; then
   echo "$0: about to train model"
   steps/chain2/train.sh \
-    --stage $train_stage --cmd "$cuda_cmd" \
+    --stage $train_stage --cmd "$train_cmd" \
+    --use-gpu "wait" \
     --xent-regularize $xent_regularize --leaky-hmm-coefficient 0.1 \
     --max-param-change 2.0 \
     --num-jobs-initial $num_jobs_initial \
     --num-jobs-final $num_jobs_final \
-    --groups-per-minibatch 256,128,64 \
+    --minibatch-size 256,128,64 \
      $dir/egs $dir || exit 1;
 fi
 
 
 exit 0;
-
-
