@@ -58,9 +58,9 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "stage 0: Data preparation"
     # For training set
     mkdir -p data/train/ data/dev/ data/test/
-    cp ${tr_dir}/* data/train/ || exit 1;
-    cp ${dev_dir}/* data/dev/ || exit 1;
-    cp ${test_dir}/* data/test/ || exit 1;
+    cp ${tr_dir}/wav.scp ${tr_dir}/utt2spk ${tr_dir}/spk2utt ${tr_dir}/text ${tr_dir}/feats.scp data/train/ || exit 1;
+    cp ${dev_dir}/wav.scp ${dev_dir}/utt2spk ${dev_dir}/spk2utt ${dev_dir}/text ${dev_dir}/feats.scp data/dev/ || exit 1;
+    cp ${test_dir}/wav.scp ${test_dir}/utt2spk ${test_dir}/spk2utt ${test_dir}/text ${test_dir}/feats.scp data/test/ || exit 1;
     # # For dev and test set
 
     # Normalize text to capital letters
