@@ -258,7 +258,7 @@ if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
             --model ${expdir}/results/${recog_model}  \
             --rnnlm ${lmexpdir}/rnnlm.model.best
 
-        score_sclite.sh ${expdir}/${decode_dir} ${dict}
+        ../gmm/local/score_sclite.sh ${expdir}/${decode_dir} ${dict}
 
     ) &
     pids+=($!) # store background pids
