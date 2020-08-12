@@ -161,7 +161,7 @@ if [ -z ${lmtag} ]; then
     lmtag=$(basename ${lm_config%.*})
 fi
 lmexpname=train_rnnlm_${backend}_${lmtag}
-lmexpdir=/home1/meichaoyang/workspace/git/espnet/egs/aishell2/asr1/lmexpdir/${lmexpname}
+lmexpdir=${PWD}/lmexpdir/${lmexpname}
 mkdir -p ${lmexpdir}/results
 
 if [ ${stage} -le 3 ] && [ ${stop_stage} -ge 3 ]; then
@@ -195,7 +195,7 @@ if [ -z ${tag} ]; then
 else
     expname=${train_set}_${backend}_${tag}
 fi
-expdir=/home1/meichaoyang/workspace/git/espnet/egs/aishell2/asr1/${expname}
+expdir=${PWD}/${expname}
 mkdir -p ${expdir}
 
 if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
