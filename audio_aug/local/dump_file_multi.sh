@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-nj=40
+nj=12
 cmd=run.pl
 
 
