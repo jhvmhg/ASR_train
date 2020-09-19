@@ -19,9 +19,16 @@ set -e
 
 merge_LM=/home1/meichaoyang/workspace/git/ASR_train/lm/merge.lm
 location_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location.lm
+location_big_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location_big.lm
 ori_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/magic_train.lm
 
 tree_dir=exp/chain/combine_data_exp
+
+#生成语言模型
+if [ $stage -le -1 ]; then
+  ngram-count -sort -text data/lmnr.txt -order 3 -unk -map-unk "SPOKEN_NOISE" -interpolate -lm ${location_big_lm}
+fi
+
 
 # For the purposes of this script we just need a biphone tree and associated
 # transition-model for testing, because we're testing it at the graph level,
@@ -95,7 +102,7 @@ if [ $stage -le 3 ]; then
   # situations where you want to keep track of the structure of calling
   # nonterminals.
   lang=data/lang_grammar2a
-  gzip -c ${location_lm} > ${lang}/lm.gz
+  gzip -c ${location_big_lm} > ${lang}/lm.gz
   bash utils/format_lm.sh ${lang} ${lang}/lm.gz data/dict_grammar1/lexicon.txt ${lang}
 
   nonterm_location=$(grep '#nonterm:location' $lang/words.txt | awk '{print $2}')
@@ -142,7 +149,7 @@ if [ $stage -le 4 ]; then
 1    2    韩国 韩国 0.69314718055994
 1    2    朴宝英 朴宝英 0.69314718055994
 1    2    厦门 厦门 0.69314718055994
-1    2    口口 口口 0.69314718055994
+1    2    口 口 0.69314718055994
 1    2    天要下雨 天要下雨 0.69314718055994
 1    2    天要下雨 天要下雨 0.69314718055994
 2    3    #nonterm_end <eps>
