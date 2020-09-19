@@ -21,12 +21,14 @@ merge_LM=/home1/meichaoyang/workspace/git/ASR_train/lm/merge.lm
 location_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location.lm
 location_big_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location_big.lm
 ori_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/magic_train.lm
+merge_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/merge.lm
 
 tree_dir=exp/chain/combine_data_exp
 
 #生成语言模型
 if [ $stage -le -1 ]; then
   ngram-count -sort -text data/lmnr.txt -order 3 -unk -map-unk "SPOKEN_NOISE" -interpolate -lm ${location_big_lm}
+  ngram -lm $ori_lm -order 3 -mix-lm ${location_big_lm} -lambda 0.8 -write-lm $merge_lm
 fi
 
 
