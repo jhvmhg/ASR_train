@@ -22,6 +22,7 @@ location_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location.lm
 location_big_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/location_big.lm
 ori_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/magic_train.lm
 merge_lm=/home1/meichaoyang/workspace/git/ASR_train/lm/merge.lm
+txt_2b=
 
 tree_dir=exp/chain/combine_data_exp
 
@@ -142,21 +143,9 @@ if [ $stage -le 4 ]; then
   # Again, we don't choose to put these symbols on the output side, but it would
   # be possible to do so.
   lang=data/lang_grammar2b
-  cat <<EOF | fstcompile --isymbols=$lang/words.txt --osymbols=$lang/words.txt | \
+  python local/grammar/pre_class_G.py ${txt_2b} | fstcompile --isymbols=$lang/words.txt --osymbols=$lang/words.txt | \
      fstarcsort --sort_type=ilabel > $lang/G.fst
-0    1    #nonterm_begin <eps>
-1    2    杭州  杭州    0.69314718055994
-1    2    广州  广州    0.39314718055994
-1    2    重庆市 重庆市 0.69314718055994
-1    2    韩国 韩国 0.69314718055994
-1    2    朴宝英 朴宝英 0.69314718055994
-1    2    厦门 厦门 0.69314718055994
-1    2    口 口 0.69314718055994
-1    2    天要下雨 天要下雨 0.69314718055994
-1    2    天要下雨 天要下雨 0.69314718055994
-2    3    #nonterm_end <eps>
-3
-EOF
+
   utils/mkgraph.sh --self-loop-scale 1.0 $lang $tree_dir $tree_dir/grammar2b
 
 
