@@ -44,14 +44,19 @@ def genarate_wav_scp(wav_dir):
 
 
 def main():
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 4 and len(sys.argv) != 2:
         print("replace_utt.py <original_dir> <dest_dir> <file>")
+        print("or replace_utt.py <wav_dir> to genarate wav.scp")
         exit(1)
-    oridir = sys.argv[1]
-    destdir = sys.argv[2]
-    file = sys.argv[3]
-    relace_utt(oridir, destdir, file)
+    if len(sys.argv) == 4:
+        oridir = sys.argv[1]
+        destdir = sys.argv[2]
+        file = sys.argv[3]
+        relace_utt(oridir, destdir, file)
+    else:
+        genarate_wav_scp(sys.argv[1])
 
 
 if __name__ == '__main__':
     main()
+
