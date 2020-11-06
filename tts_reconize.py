@@ -2,10 +2,7 @@
 # coding: utf-8
 
 import os
-import sys
 from pathlib import Path
-import re
-import jieba
 from lib.my_io import parse_file_to_dict, write_dict_to_file, get_new_id, copy_file_if_exists
 
 from tqdm import tqdm
