@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 sys.path.append("./")
-from lib.io import parse_file_to_dict, write_dict_to_file, get_new_id, copy_file_if_exists
+from lib.IO import parse_file_to_dict, write_dict_to_file, get_new_id, copy_file_if_exists
 import shutil
 
 

@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, '..')
-from lib.io import parse_file_to_dict, write_dict_to_file
+from lib.IO import parse_file_to_dict, write_dict_to_file
 
 def get_args():
     parser = argparse.ArgumentParser(

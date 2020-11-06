@@ -4,11 +4,24 @@
 import os
 import sys
 from pathlib import Path
-import re
-import jieba
 from IO import parse_file_to_dict, write_dict_to_file, get_new_id, copy_file_if_exists
 
 from tqdm import tqdm
+
+
+def list_files(path):
+    res = []
+    lsdir = os.listdir(path)
+    dirs = [i for i in lsdir if os.path.isdir(os.path.join(path, i))]
+    if dirs:
+        for i in dirs:
+            res.extend(list_files(os.path.join(path, i)))
+    files = [i for i in lsdir if os.path.isfile(os.path.join(path, i))]
+    for f in files:
+        if f.endswith(".wav"):
+            res.append(os.path.join(path, f))
+
+    return res
 
 
 def transSampleRateFile(inf, outf, outSample):
@@ -18,20 +31,21 @@ def transSampleRateFile(inf, outf, outSample):
 
 def transSampleRateDir(Inputdir, Outputdir, OutSample):
     os.makedirs(Outputdir, exist_ok=True)
-    files = [file for file in os.listdir(Inputdir) if file.endswith(".wav")]
+
+    files = list(Path(Inputdir).rglob("*.wav"))
     pbar = tqdm(files)
     pbar.set_description("sox 转换进度")
     for file in pbar:
-        inf = os.path.join(Inputdir, file)
-        outf = os.path.join(Outputdir, file)
-        transSampleRateFile(inf, outf, OutSample)
+        inf = os.path.join(Inputdir, str(file))
+        outf = os.path.join(Outputdir, os.path.basename(file))
+        transSampleRateFile(file, outf, OutSample)
 
 
 def main():
     Inputdir = sys.argv[1]
     Outputdir = sys.argv[2]
     OutSample = 16000
-    transSampleRateDir(Inputdir, Outputdir, OutSample)
+    transSampleRateDir(Inputdir, os.path.join(Outputdir, "wav"), OutSample)
 
     wav_list_16k = list(Path(Outputdir).rglob("*.wav"))
     wav_scp = {}
@@ -56,6 +70,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
