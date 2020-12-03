@@ -11,7 +11,7 @@ n=24
 
 if [ $stage -le 0 ]; then
     #monophone
-    steps/train_mono.sh --stage 20 --boost-silence 1.25 --nj $n --cmd "$train_cmd" $1 data/lang exp/mono || exit 1;
+    steps/train_mono.sh --boost-silence 1.25 --nj $n --cmd "$train_cmd" $1 data/lang exp/mono || exit 1;
 
     #monophone_ali
     steps/align_si.sh --boost-silence 1.25 --nj $n --cmd "$train_cmd" $1 data/lang exp/mono exp/mono_ali || exit 1;
