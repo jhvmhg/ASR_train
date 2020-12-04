@@ -29,7 +29,7 @@ fi
 
 if [ $stage -le 2 ]; then
     #lda_mllt
-    steps/train_lda_mllt.sh --stage 2 --cmd "$train_cmd" --splice-opts "--left-context=3 --right-context=3" 12000 120000 $1 data/lang exp/tri1_ali exp/tri2b || exit 1;
+    steps/train_lda_mllt.sh --cmd "$train_cmd" --splice-opts "--left-context=3 --right-context=3" 12000 120000 $1 data/lang exp/tri1_ali exp/tri2b || exit 1;
     #lda_mllt_ali
     steps/align_si.sh  --nj $n --cmd "$train_cmd" --use-graphs true $1 data/lang exp/tri2b exp/tri2b_ali || exit 1;
 fi
