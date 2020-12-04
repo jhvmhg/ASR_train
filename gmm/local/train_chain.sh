@@ -17,7 +17,7 @@ final_effective_lrate=0.0001
 leftmost_questions_truncate=-1
 max_param_change=2.0
 final_layer_normalize_target=0.5
-num_jobs_initial=1
+num_jobs_initial=2
 num_jobs_final=3
 minibatch_size=128
 frames_per_eg=150
@@ -129,7 +129,7 @@ fi
 if [ $stage -le 13 ]; then
   steps/nnet3/chain/train.py --stage $train_stage \
     --cmd "$decode_cmd" \
-    --use-gpu true \
+    --use-gpu wait \
     --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
     --chain.xent-regularize $xent_regularize \
     --chain.leaky-hmm-coefficient 0.1 \
